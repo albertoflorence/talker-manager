@@ -12,6 +12,7 @@ const {
   authenticateUser,
   validateTalker,
   talkerExists,
+  validateSearch,
 } = require('./middlewares');
 
 const app = express();
@@ -34,10 +35,13 @@ app.get('/talker', async (req, res) => {
   return res.status(200).json(talkers);
 });
 
-app.get('/talker/search', authenticateUser, async (req, res) => {
-  const { q } = req.query;
+app.get('/talker/search', authenticateUser, validateSearch, async (req, res) => {
+  const { q, rate } = req.query;
   const talkers = await getTalkers();
-  const result = q ? talkers.filter(({ name }) => name.includes(q)) : talkers;
+  let result = q ? talkers.filter(({ name }) => name.includes(q)) : talkers;
+  if (rate) {
+    result = result.filter(({ talk }) => talk.rate === Number(rate));
+  }
 
   res.status(200).json(result);
 });

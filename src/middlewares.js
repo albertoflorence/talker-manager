@@ -1,4 +1,4 @@
-const { talkerResolver, authResolver } = require('./validations');
+const { talkerResolver, authResolver, searchResolver } = require('./validations');
 const { getTalkerById } = require('./services');
 
 const validateLogin = (req, res, next) => {
@@ -43,9 +43,19 @@ const talkerExists = async (req, res, next) => {
   next();
 };
 
+const validateSearch = (req, res, next) => {
+  const { rate } = req.query;
+  const message = rate && searchResolver({ rate: Number(rate) });
+
+  if (message) return res.status(400).json({ message });
+
+  next();
+};
+
 module.exports = {
   validateLogin,
   authenticateUser,
   validateTalker,
   talkerExists,
+  validateSearch,
 };

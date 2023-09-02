@@ -1,5 +1,11 @@
 const { V, resolver } = require('./validator');
 
+const rate = V()
+  .required('O campo "rate" é obrigatório')
+  .integer('O campo "rate" deve ser um número inteiro entre 1 e 5')
+  .min(1, 'O campo "rate" deve ser um número inteiro entre 1 e 5')
+  .max(5, 'O campo "rate" deve ser um número inteiro entre 1 e 5');
+
 const talkerResolver = resolver({
   name: V()
     .required('O campo "name" é obrigatório')
@@ -15,11 +21,7 @@ const talkerResolver = resolver({
         /^(([0-2][0-9])|3[0-1])\/((0[1-9])|(1[0-2]))\/[0-9]{4}$/,
         'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
       ),
-    rate: V()
-      .required('O campo "rate" é obrigatório')
-      .integer('O campo "rate" deve ser um número inteiro entre 1 e 5')
-      .min(1, 'O campo "rate" deve ser um número inteiro entre 1 e 5')
-      .max(5, 'O campo "rate" deve ser um número inteiro entre 1 e 5'),
+    rate,
   },
 });
 
@@ -32,7 +34,12 @@ const authResolver = resolver({
     .min(6, 'O "password" deve ter pelo menos 6 caracteres'),
 });
 
+const searchResolver = resolver({
+  rate,
+});
+
 module.exports = {
   talkerResolver,
   authResolver,
+  searchResolver,
 };
