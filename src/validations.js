@@ -37,13 +37,13 @@ const authResolver = resolver({
     .min(6, 'O "password" deve ter pelo menos 6 caracteres'),
 });
 
-const searchResolver = {
-  rate: resolver({ rate }),
-  date: resolver({ date: watchedAt('parâmetro "date"') }),
-};
+const rateResolver = resolver({ rate });
+
+const dateResolver = resolver({ date: watchedAt('parâmetro "date"') });
 
 module.exports = {
   talkerResolver,
   authResolver,
-  searchResolver,
+  rateResolver,
+  dateResolver,
 };

@@ -13,6 +13,7 @@ const {
   validateTalker,
   talkerExists,
   validateSearch,
+  validateUpdate,
 } = require('./middlewares');
 
 const app = express();
@@ -90,3 +91,21 @@ app.delete('/talker/:id', authenticateUser, talkerExists, async (req, res) => {
   await deleteTalker(Number(id));
   return res.status(204).end();
 });
+
+app.patch(
+  '/talker/rate/:id',
+  authenticateUser,
+  talkerExists,
+  validateUpdate,
+  async (req, res) => {
+    const { id } = req.params;
+    const { rate } = req.body;
+    const { name, age, talk } = req.talker;
+    const updatedTalker = await updateTalker(Number(id), {
+      name,
+      age,
+      talk: { ...talk, rate },
+    });
+    return res.status(204).json(updatedTalker);
+  },
+);

@@ -1,4 +1,9 @@
-const { talkerResolver, authResolver, searchResolver } = require('./validations');
+const {
+  talkerResolver,
+  authResolver,
+  rateResolver,
+  dateResolver,
+} = require('./validations');
 const { getTalkerById } = require('./services');
 
 const validateLogin = (req, res, next) => {
@@ -39,23 +44,22 @@ const talkerExists = async (req, res, next) => {
   if (!talker) {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
-
+  req.talker = talker;
   next();
 };
 
 const validateSearch = (req, res, next) => {
   const { rate, date } = req.query;
-  const { rate: rateResolver, date: dateResolver } = searchResolver;
   let message;
-  if (rate) {
-    message = rateResolver({ rate: Number(rate) });
-  }
-  if (date) {
-    message = dateResolver({ date });
-  }
-
+  if (rate) message = rateResolver({ rate: Number(rate) });
+  if (date) message = dateResolver({ date });
   if (message) return res.status(400).json({ message });
+  next();
+};
 
+const validateUpdate = (req, res, next) => {
+  const message = rateResolver({ rate: req.body.rate });
+  if (message) return res.status(400).json({ message });
   next();
 };
 
@@ -65,4 +69,5 @@ module.exports = {
   validateTalker,
   talkerExists,
   validateSearch,
+  validateUpdate,
 };
