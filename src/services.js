@@ -25,8 +25,17 @@ const addTalker = async (data) => {
   return talker;
 };
 
+const updateTalker = async (id, data) => {
+  const result = await getTalkers();
+  const talker = { ...data, id };
+  const talkers = result.map((item) => (item.id === id ? talker : item));
+  await setTalkers(talkers);
+  return talker;
+};
+
 module.exports = {
   getTalkers,
   getTalkerById,
   addTalker,
+  updateTalker,
 };
