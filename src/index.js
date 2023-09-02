@@ -36,11 +36,15 @@ app.get('/talker', async (req, res) => {
 });
 
 app.get('/talker/search', authenticateUser, validateSearch, async (req, res) => {
-  const { q, rate } = req.query;
+  const { q, rate, date } = req.query;
   const talkers = await getTalkers();
   let result = q ? talkers.filter(({ name }) => name.includes(q)) : talkers;
   if (rate) {
     result = result.filter(({ talk }) => talk.rate === Number(rate));
+  }
+
+  if (date) {
+    result = result.filter(({ talk }) => talk.watchedAt === date);
   }
 
   res.status(200).json(result);

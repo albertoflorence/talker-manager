@@ -44,8 +44,15 @@ const talkerExists = async (req, res, next) => {
 };
 
 const validateSearch = (req, res, next) => {
-  const { rate } = req.query;
-  const message = rate && searchResolver({ rate: Number(rate) });
+  const { rate, date } = req.query;
+  const { rate: rateResolver, date: dateResolver } = searchResolver;
+  let message;
+  if (rate) {
+    message = rateResolver({ rate: Number(rate) });
+  }
+  if (date) {
+    message = dateResolver({ date });
+  }
 
   if (message) return res.status(400).json({ message });
 

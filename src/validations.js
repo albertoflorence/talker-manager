@@ -6,6 +6,14 @@ const rate = V()
   .min(1, 'O campo "rate" deve ser um número inteiro entre 1 e 5')
   .max(5, 'O campo "rate" deve ser um número inteiro entre 1 e 5');
 
+const watchedAt = (fieldName) =>
+  V()
+    .required('O campo "watchedAt" é obrigatório')
+    .regex(
+      /^(([0-2][0-9])|3[0-1])\/((0[1-9])|(1[0-2]))\/[0-9]{4}$/,
+      `O ${fieldName} deve ter o formato "dd/mm/aaaa"`,
+    );
+
 const talkerResolver = resolver({
   name: V()
     .required('O campo "name" é obrigatório')
@@ -15,13 +23,8 @@ const talkerResolver = resolver({
     .integer('O campo "age" deve ser um número inteiro igual ou maior que 18')
     .min(18, 'O campo "age" deve ser um número inteiro igual ou maior que 18'),
   talk: {
-    watchedAt: V()
-      .required('O campo "watchedAt" é obrigatório')
-      .regex(
-        /^(([0-2][0-9])|3[0-1])\/((0[1-9])|(1[0-2]))\/[0-9]{4}$/,
-        'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
-      ),
     rate,
+    watchedAt: watchedAt('campo "watchedAt"'),
   },
 });
 
@@ -34,9 +37,10 @@ const authResolver = resolver({
     .min(6, 'O "password" deve ter pelo menos 6 caracteres'),
 });
 
-const searchResolver = resolver({
-  rate,
-});
+const searchResolver = {
+  rate: resolver({ rate }),
+  date: resolver({ date: watchedAt('parâmetro "date"') }),
+};
 
 module.exports = {
   talkerResolver,
