@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const db = require('./db');
 
 const pathTalker = path.join(__dirname, 'talker.json');
 
@@ -39,10 +40,24 @@ const deleteTalker = async (id) => {
   await setTalkers(talkers);
 };
 
+const getTalkersDb = async () => {
+  const [result] = await db.query('SELECT * FROM talkers');
+  return result.map(({ age, id, name, ...rest }) => ({
+    id,
+    name,
+    age,
+    talk: {
+      watchedAt: rest.talk_watched_at,
+      rate: rest.talk_rate,
+    },
+  }));
+};
+
 module.exports = {
   getTalkers,
   getTalkerById,
   addTalker,
   updateTalker,
   deleteTalker,
+  getTalkersDb,
 };

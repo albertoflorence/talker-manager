@@ -5,6 +5,7 @@ const {
   addTalker,
   updateTalker,
   deleteTalker,
+  getTalkersDb,
 } = require('./services');
 const { generateToken } = require('./utils');
 const {
@@ -33,6 +34,11 @@ app.listen(PORT, () => {
 
 app.get('/talker', async (req, res) => {
   const talkers = await getTalkers();
+  return res.status(200).json(talkers);
+});
+
+app.get('/talker/db', async (req, res) => {
+  const talkers = await getTalkersDb();
   return res.status(200).json(talkers);
 });
 
