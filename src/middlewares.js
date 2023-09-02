@@ -1,4 +1,5 @@
 const { talkerResolver, authResolver } = require('./validations');
+const { getTalkerById } = require('./services');
 
 const validateLogin = (req, res, next) => {
   const message = authResolver(req.body);
@@ -31,8 +32,20 @@ const validateTalker = (req, res, next) => {
   next();
 };
 
+const talkerExists = async (req, res, next) => {
+  const { id } = req.params;
+  const talker = await getTalkerById(id);
+
+  if (!talker) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+
+  next();
+};
+
 module.exports = {
   validateLogin,
   authenticateUser,
   validateTalker,
+  talkerExists,
 };
