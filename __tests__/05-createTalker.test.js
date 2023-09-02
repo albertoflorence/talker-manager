@@ -10,28 +10,14 @@ const url = 'http://localhost:3001';
 
 describe('5 - Crie o endpoint POST /talker', () => {
   beforeEach(() => {
-    const talkerSeed = fs.readFileSync(
-      SEED_FILE,
-      'utf8',
-    );
+    const talkerSeed = fs.readFileSync(SEED_FILE, 'utf8');
 
-    fs.writeFileSync(
-      TALKER_FILE,
-      talkerSeed,
-      'utf8',
-    );
+    fs.writeFileSync(TALKER_FILE, talkerSeed, 'utf8');
   });
 
   afterAll(() => {
-    const talkerSeed = fs.readFileSync(
-      SEED_FILE,
-      'utf8'
-    );
-    fs.writeFileSync(
-      TALKER_FILE,
-      talkerSeed,
-      'utf8',
-    );
+    const talkerSeed = fs.readFileSync(SEED_FILE, 'utf8');
+    fs.writeFileSync(TALKER_FILE, talkerSeed, 'utf8');
   });
 
   it('Será validado que não é possível cadastrar uma pessoa palestrante sem estar autorizado', async () => {
@@ -58,7 +44,13 @@ describe('5 - Crie o endpoint POST /talker', () => {
   });
 
   it('Será validado que não é possível cadastrar uma pessoa palestrante com token inválido', async () => {
-    const invalidTokens = [99999999, '99999999', undefined, '123456789012345', '99999999999999999'];
+    const invalidTokens = [
+      99999999,
+      '99999999',
+      undefined,
+      '123456789012345',
+      '99999999999999999',
+    ];
     for (let i = 0; i < invalidTokens.length; i++) {
       await frisby
         .post(`${url}/login`, {
@@ -151,9 +143,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           .expect('status', 400)
           .then((responseCreate) => {
             const { json } = responseCreate;
-            expect(json.message).toBe(
-              'O "name" deve ter pelo menos 3 caracteres',
-            );
+            expect(json.message).toBe('O "name" deve ter pelo menos 3 caracteres');
           });
       });
   });
@@ -212,7 +202,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           })
           .post(`${url}/talker`, {
             name: 'Zendaya Maree',
-            age: "Dezoito",
+            age: 'Dezoito',
             talk: { rate: 5, watchedAt: '25/09/2020' },
           })
           .expect('status', 400)
@@ -259,7 +249,6 @@ describe('5 - Crie o endpoint POST /talker', () => {
           });
       });
   });
-
 
   it('Será validado que não é possível cadastrar uma pessoa palestrante com idade menor de 18 anos', async () => {
     await frisby
@@ -323,9 +312,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           .expect('status', 400)
           .then((responseCreate) => {
             const { json } = responseCreate;
-            expect(json.message).toBe(
-              'O campo "talk" é obrigatório',
-            );
+            expect(json.message).toBe('O campo "talk" é obrigatório');
           });
       });
   });
@@ -358,9 +345,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           .expect('status', 400)
           .then((responseCreate) => {
             const { json } = responseCreate;
-            expect(json.message).toBe(
-              'O campo "watchedAt" é obrigatório',
-            );
+            expect(json.message).toBe('O campo "watchedAt" é obrigatório');
           });
       });
   });
@@ -442,9 +427,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           .expect('status', 400)
           .then((responseCreate) => {
             const { json } = responseCreate;
-            expect(json.message).toBe(
-              'O campo "rate" é obrigatório',
-            );
+            expect(json.message).toBe('O campo "rate" é obrigatório');
           });
       });
   });
@@ -553,7 +536,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
           });
       });
   });
-  
+
   it('Será validado que não é possível cadastrar uma pessoa palestrante com rate com número decimal', async () => {
     await frisby
       .post(`${url}/login`, {
@@ -592,7 +575,7 @@ describe('5 - Crie o endpoint POST /talker', () => {
   it('Será validado que é possível cadastrar uma pessoa palestrante com sucesso', async () => {
     const postTalkersMock = getNewTalkers();
     for (postTalkerMock of postTalkersMock) {
-      const id = JSON.parse(fs.readFileSync(TALKER_FILE,'utf8')).length + 1
+      const id = JSON.parse(fs.readFileSync(TALKER_FILE, 'utf8')).length + 1;
       await frisby
         .post(`${url}/login`, {
           body: {
@@ -615,17 +598,14 @@ describe('5 - Crie o endpoint POST /talker', () => {
             .post(`${url}/talker`, postTalkerMock)
             .expect('status', 201)
             .then((responseCreate) => {
-              postTalkerMock.id = id
-              expect(JSON.parse(fs.readFileSync(
-                TALKER_FILE,
-                'utf8',
-              ))).toEqual(
+              postTalkerMock.id = id;
+              expect(JSON.parse(fs.readFileSync(TALKER_FILE, 'utf8'))).toEqual(
                 expect.arrayContaining([expect.objectContaining(postTalkerMock)]),
               );
               const { json } = responseCreate;
               expect(json).toEqual(postTalkerMock);
-            })
-        })
+            });
+        });
     }
   });
 });

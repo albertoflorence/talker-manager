@@ -1,5 +1,7 @@
 const express = require('express');
-const { getTalkers, getTalkerById, generateToken } = require('./services');
+const { getTalkers, getTalkerById, addTalker } = require('./services');
+const { generateToken } = require('./utils');
+const { validateLogin, authenticateUser, validateTalker } = require('./middlewares');
 
 const app = express();
 app.use(express.json());
@@ -32,33 +34,13 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(talker);
 });
 
-const validateLogin = (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
-  }
-
-  if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email)) {
-    return res
-      .status(400)
-      .json({ message: 'O "email" deve ter o formato "email@email.com"' });
-  }
-
-  if (!password) {
-    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
-  }
-
-  if (password.length < 6) {
-    return res
-      .status(400)
-      .json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
-  }
-
-  next();
-};
-
 app.post('/login', validateLogin, (req, res) => {
   const token = generateToken();
   return res.status(200).json({ token });
+});
+
+app.post('/talker', authenticateUser, validateTalker, async (req, res) => {
+  const { name, age, talk } = req.body;
+  const talker = await addTalker({ name, age, talk });
+  return res.status(201).json(talker);
 });
