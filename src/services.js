@@ -33,9 +33,16 @@ const updateTalker = async (id, data) => {
   return talker;
 };
 
+const deleteTalker = async (id) => {
+  const result = await getTalkers();
+  const talkers = result.filter((item) => item.id !== id);
+  await setTalkers(talkers);
+};
+
 module.exports = {
   getTalkers,
   getTalkerById,
   addTalker,
   updateTalker,
+  deleteTalker,
 };

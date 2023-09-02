@@ -1,5 +1,11 @@
 const express = require('express');
-const { getTalkers, getTalkerById, addTalker, updateTalker } = require('./services');
+const {
+  getTalkers,
+  getTalkerById,
+  addTalker,
+  updateTalker,
+  deleteTalker,
+} = require('./services');
 const { generateToken } = require('./utils');
 const { validateLogin, authenticateUser, validateTalker } = require('./middlewares');
 
@@ -57,4 +63,17 @@ app.put('/talker/:id', authenticateUser, validateTalker, async (req, res) => {
   const updatedTalker = await updateTalker(Number(id), { name, age, talk });
 
   return res.status(200).json(updatedTalker);
+});
+
+app.delete('/talker/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params;
+  const talker = await getTalkerById(id);
+
+  if (!talker) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+
+  await deleteTalker(Number(id));
+
+  return res.status(204).end();
 });
